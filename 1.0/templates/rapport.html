@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('lang','fr') }}">
+<head>
+  <meta charset="utf-8">
+  <title>
+    {% if session.get('lang','fr') == 'fr' %}
+      Rapport d'analyse – {{ filename }}
+    {% else %}
+      Analysis report – {{ filename }}
+    {% endif %}
+  </title>
+  <style>
+    body { font-family: system-ui, sans-serif; background:#f3f4f6; margin:0; }
+    main { max-width: 1100px; margin:20px auto; padding:16px; background:#ffffff; border-radius:8px; }
+    h1 { margin-top:0; }
+    .graphs-row { display:flex; flex-wrap:wrap; gap:14px; margin-bottom:20px; }
+    .graph-card { background:#f9fafb; padding:10px; border-radius:8px; flex:1 1 30%; min-width:260px; }
+    .graph-card img { max-width:100%; border-radius:6px; }
+    table { border-collapse:collapse; width:100%; margin:14px 0; font-size:0.9rem; }
+    th, td { border:1px solid #e5e7eb; padding:6px 8px; text-align:left; }
+    th { background:#f9fafb; }
+    .toolbar { margin-bottom:12px; display:flex; gap:8px; flex-wrap:wrap; }
+    .btn { padding:6px 10px; border-radius:6px; border:1px solid #d1d5db;
+           background:#fff; text-decoration:none; color:#111827; }
+  </style>
+</head>
+<body>
+<main>
+  <!-- Titre principal -->
+  <h1>
+    {% if session.get('lang','fr') == 'fr' %}
+      Rapport d'analyse – {{ filename }}
+    {% else %}
+      Analysis report – {{ filename }}
+    {% endif %}
+  </h1>
+
+  <!-- Boutons -->
+  <div class="toolbar">
+    <a class="btn" href="{{ url_for('download_csv') }}">
+      {% if session.get('lang','fr') == 'fr' %}
+        Télécharger CSV
+      {% else %}
+        Download CSVs
+      {% endif %}
+    </a>
+    <a class="btn" href="{{ url_for('download_xlsx') }}">
+      {% if session.get('lang','fr') == 'fr' %}
+        Télécharger Excel
+      {% else %}
+        Download Excel
+      {% endif %}
+    </a>
+    <a class="btn" href="{{ url_for('index') }}">
+      {% if session.get('lang','fr') == 'fr' %}
+        Nouvelle analyse
+      {% else %}
+        New analysis
+      {% endif %}
+    </a>
+  </div>
+
+  <!-- 3 graphes -->
+  <section class="graphs-row">
+    {% if charts.get('traffic_by_dst') %}
+      <div class="graph-card">
+        <h2>
+          {% if session.get('lang','fr') == 'fr' %}
+            Trafic par destination
+          {% else %}
+            Traffic by destination
+          {% endif %}
+        </h2>
+        <img src="data:image/png;base64,{{ charts['traffic_by_dst'] }}" alt="">
+      </div>
+    {% endif %}
+
+    {% if charts.get('top_sources') %}
+      <div class="graph-card">
+        <h2>
+          {% if session.get('lang','fr') == 'fr' %}
+            Sources principales
+          {% else %}
+            Main sources
+          {% endif %}
+        </h2>
+        <img src="data:image/png;base64,{{ charts['top_sources'] }}" alt="">
+      </div>
+    {% endif %}
+
+    {% if charts.get('top_ports') %}
+      <div class="graph-card">
+        <h2>
+          {% if session.get('lang','fr') == 'fr' %}
+            Ports de destination les plus utilisés
+          {% else %}
+            Most used destination ports
+          {% endif %}
+        </h2>
+        <img src="data:image/png;base64,{{ charts['top_ports'] }}" alt="">
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Rapport complet généré par build_markdown_report (FR ou EN selon current_lang) -->
+  <section>
+    {{ html_report|safe }}
+  </section>
+</main>
+</body>
+</html>

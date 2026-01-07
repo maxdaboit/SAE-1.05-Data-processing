@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <title>{{ 'Analyse tcpdump - SAE 1.05' if lang=='fr' else 'tcpdump analysis - SAE 1.05' }}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background:#f3f4f6; margin:0; }
+    .container { max-width: 900px; margin:40px auto; background:#fff; padding:24px;
+                 border-radius:12px; box-shadow:0 10px 25px rgba(15,23,42,.08); }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .dropzone {
+      border:2px dashed #94a3b8; border-radius:10px; padding:30px;
+      text-align:center; color:#4b5563; cursor:pointer; background:#f9fafb;
+      margin-bottom:16px;
+    }
+    .dropzone.dragover { border-color:#2563eb; background:#eff6ff; }
+    .thresholds { display:grid; grid-template-columns: 1fr 1fr; gap:8px 16px; margin-top:10px; }
+    label { font-size:0.9rem; }
+    input[type=number] { width:100%; padding:4px 6px; box-sizing:border-box; }
+    button { margin-top:14px; padding:6px 12px; border-radius:6px;
+             border:1px solid #d1d5db; background:#2563eb; color:white; cursor:pointer; }
+    select { padding:4px 8px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topbar">
+    <h1>{{ 'Analyse tcpdump - SAE 1.05' if lang=='fr' else 'tcpdump analysis - SAE 1.05' }}</h1>
+    <select id="lang-switch">
+      <option value="fr" {{ 'selected' if lang=='fr' else '' }}>FR</option>
+      <option value="en" {{ 'selected' if lang=='en' else '' }}>EN</option>
+    </select>
+  </div>
+
+  <form id="upload-form" action="{{ url_for('analyser') }}" method="post" enctype="multipart/form-data">
+    <input type="file" id="file-input" name="file" accept=".txt,.log,.pcap" style="display:none">
+    <div id="dropzone" class="dropzone">
+      <p id="dz-text">
+        {{ 'Glissez-déposez votre fichier tcpdump ici ou cliquez pour le sélectionner.'
+           if lang=='fr'
+           else 'Drag & drop your tcpdump file here or click to select it.' }}
+      </p>
+    </div>
+
+    <h2>{{ 'Seuils de détection' if lang=='fr' else 'Detection thresholds' }}</h2>
+    <div class="thresholds">
+      <label>
+        {{ 'Ports distincts (scan) ≥' if lang=='fr' else 'Distinct ports (scan) ≥' }}
+        <input type="number" name="scan_ports" value="{{ default_scan_ports }}">
+      </label>
+      <label>
+        {{ 'Paquets vers une IP (DoS) ≥' if lang=='fr' else 'Packets to one IP (DoS) ≥' }}
+        <input type="number" name="dos_abs" value="{{ default_dos_abs }}">
+      </label>
+      <label>
+        {{ 'Pourcentage trafic (DoS) ≥' if lang=='fr' else 'Traffic percentage (DoS) ≥' }}
+        <input type="number" name="dos_pct" value="{{ default_dos_pct }}">
+      </label>
+      <label>
+        {{ 'Destinations distinctes (noisy) ≥' if lang=='fr' else 'Distinct destinations (noisy) ≥' }}
+        <input type="number" name="noisy_dests" value="{{ default_noisy_dests }}">
+      </label>
+      <label>
+        {{ 'Paquets par source (noisy) ≥' if lang=='fr' else 'Packets per source (noisy) ≥' }}
+        <input type="number" name="noisy_pkts" value="{{ default_noisy_pkts }}">
+      </label>
+      <label>
+        {{ 'Paquets SYN (SYN flood) ≥' if lang=='fr' else 'SYN packets (SYN flood) ≥' }}
+        <input type="number" name="syn_abs" value="{{ default_syn_abs }}">
+      </label>
+      <label>
+        {{ 'Ratio SYN flood (%)' if lang=='fr' else 'SYN flood ratio (%)' }}
+        <input type="number" name="syn_ratio" value="{{ default_syn_ratio }}">
+      </label>
+    </div>
+
+    <button type="submit">{{ 'Analyser' if lang=='fr' else 'Analyse' }}</button>
+  </form>
+</div>
+
+<script>
+const dz = document.getElementById('dropzone');
+const fileInput = document.getElementById('file-input');
+const form = document.getElementById('upload-form');
+const dzText = document.getElementById('dz-text');
+
+function setDropzoneText(file) {
+  if (!file) return;
+  dzText.textContent = file.name;
+}
+
+dz.addEventListener('click', () => fileInput.click());
+
+dz.addEventListener('dragover', e => {
+  e.preventDefault();
+  dz.classList.add('dragover');
+});
+
+dz.addEventListener('dragleave', e => {
+  dz.classList.remove('dragover');
+});
+
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('dragover');
+  if (e.dataTransfer.files.length) {
+    const file = e.dataTransfer.files[0];
+    fileInput.files = e.dataTransfer.files;
+    setDropzoneText(file);      // affiche le nom du fichier
+    // form.submit();           // décommente si tu veux lancer l'analyse direct
+  }
+});
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length) {
+    setDropzoneText(fileInput.files[0]);  // clic → nom affiché
+    // form.submit();
+  }
+});
+
+document.getElementById('lang-switch').addEventListener('change', (e) => {
+  const lang = e.target.value;
+  const url = new URL(window.location.href);
+  url.searchParams.set('lang', lang);
+  window.location.href = url.toString();
+});
+</script>
+</body>
+</html>
