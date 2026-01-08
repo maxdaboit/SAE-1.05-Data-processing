@@ -1,4 +1,5 @@
-('C:\\Users\\Maxence\\SAE-R1.05-DABOIT\\SAE-R1.05-DABOIT\\1.0\\build\\app\\PYZ-00.pyz',
+('C:\\Users\\Maxence\\SAE-R1.05-DABOIT\\SAE-R1.05-DABOIT\\Analyse_tcpdump-SAE '
+ '1.05\\build\\app\\PYZ-00.pyz',
  [('PIL',
    'C:\\Users\\Maxence\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\PIL\\__init__.py',
    'PYMODULE'),
@@ -2690,7 +2691,8 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\runpy.py',
    'PYMODULE'),
   ('sae105_programme',
-   'C:\\Users\\Maxence\\SAE-R1.05-DABOIT\\SAE-R1.05-DABOIT\\1.0\\sae105_programme.py',
+   'C:\\Users\\Maxence\\SAE-R1.05-DABOIT\\SAE-R1.05-DABOIT\\Analyse_tcpdump-SAE '
+   '1.05\\sae105_programme.py',
    'PYMODULE'),
   ('secrets',
    'C:\\Program '
