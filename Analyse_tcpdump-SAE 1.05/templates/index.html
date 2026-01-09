@@ -1,4 +1,3 @@
-<!-- --- templates/index.html --- -->
 <!DOCTYPE html>
 <html lang="{{ lang }}">
 <head>
@@ -23,7 +22,6 @@
              border:1px solid #d1d5db; background:#2563eb; color:white; cursor:pointer; }
     select { padding:4px 8px; }
 
-    /* Message flash (erreurs / infos) */
     .flash { padding:10px 12px; border-radius:8px; margin-bottom:14px; }
     .flash.error { background:#fee2e2; color:#991b1b; border:1px solid #fecaca; }
     .flash.info  { background:#e0f2fe; color:#075985; border:1px solid #bae6fd; }
@@ -35,14 +33,12 @@
   <div class="topbar">
     <h1>{{ 'Analyse tcpdump - SAE 1.05' if lang=='fr' else 'tcpdump analysis - SAE 1.05' }}</h1>
 
-    <!-- Sélecteur de langue : ajoute ?lang=fr|en dans l'URL -->
     <select id="lang-switch">
       <option value="fr" {{ 'selected' if lang=='fr' else '' }}>FR</option>
       <option value="en" {{ 'selected' if lang=='en' else '' }}>EN</option>
     </select>
   </div>
 
-  <!-- Zone pour afficher les messages flash (erreurs : mauvais format, aucun paquet, etc.) -->
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for category, msg in messages %}
@@ -51,10 +47,7 @@
     {% endif %}
   {% endwith %}
 
-  <form id="upload-form" action="{{ url_for('analyser') }}" method="post" enctype="multipart/form-data">
-    <!-- IMPORTANT :
-         Le parseur lit du TEXTE (sortie tcpdump), pas du .pcap brut.
-         Donc on évite d'afficher ".pcap" dans accept. -->
+  <form id="upload-form" action="{{ url_for('analyser', lang=lang) }}" method="post" enctype="multipart/form-data">
     <input type="file" id="file-input" name="file" accept=".txt,.log,.dump" style="display:none">
 
     <div id="dropzone" class="dropzone">
@@ -85,7 +78,6 @@
 
       <label>
         {{ 'Pourcentage trafic (DoS) ≥' if lang=='fr' else 'Traffic percentage (DoS) ≥' }}
-        <!-- step pour autoriser des décimales -->
         <input type="number" name="dos_pct" value="{{ default_dos_pct }}" step="0.1">
       </label>
 
@@ -128,10 +120,8 @@ function setDropzoneText(file) {
   dzText.textContent = file.name;
 }
 
-// Click -> ouvre la fenêtre fichier
 dz.addEventListener('click', () => fileInput.click());
 
-// Drag & drop UX
 dz.addEventListener('dragover', e => {
   e.preventDefault();
   dz.classList.add('dragover');
@@ -144,7 +134,6 @@ dz.addEventListener('dragleave', () => {
 dz.addEventListener('drop', e => {
   e.preventDefault();
   dz.classList.remove('dragover');
-
   if (e.dataTransfer.files.length) {
     const file = e.dataTransfer.files[0];
     fileInput.files = e.dataTransfer.files;
@@ -158,7 +147,6 @@ fileInput.addEventListener('change', () => {
   }
 });
 
-// Switch langue -> met ?lang=fr|en
 document.getElementById('lang-switch').addEventListener('change', (e) => {
   const lang = e.target.value;
   const url = new URL(window.location.href);
